@@ -12,12 +12,12 @@
 ├── requirements.txt   <- For reproducing the analysis environment, e.g.<br>
 │                         generated with `pip freeze > requirements.txt`<br>
 ├── src                <- Source code for use in this project.<br>
-    ├── data           <- Scripts to download or generate data.<br>
-    │   └── make_dataset.py<br>
-    ├── features       <- Scripts to turn raw data into features for modeling.<br>
-    │   └── build_features.py<br>
-    ├── models         <- Scripts to train models and make predictions.<br>
-    │   ├── predict_model.py<br>
-    │   └── train_model.py<br>
-    └── visualization  <- Scripts to create exploratory and results-oriented viz.<br>
-        └── visualize.py<br>
+&nbsp;&nbsp;&nbsp;&nbsp;    ├── data           <- Scripts to download or generate data.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;    │   └── make_dataset.py<br>
+&nbsp;&nbsp;&nbsp;&nbsp;    ├── features       <- Scripts to turn raw data into features for modeling.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;    │   └── build_features.py<br>
+&nbsp;&nbsp;&nbsp;&nbsp;    ├── models         <- Scripts to train models and make predictions.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;    │   ├── predict_model.py<br>
+&nbsp;&nbsp;&nbsp;&nbsp;    │   └── train_model.py<br>
+&nbsp;&nbsp;&nbsp;&nbsp;    └── visualization  <- Scripts to create exploratory and results-oriented viz.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;        └── visualize.py<br>
