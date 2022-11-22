@@ -1,6 +1,6 @@
 # DSC180A
 
-├── .gitignore         <- Files to keep out of version control (e.g. data/binaries).
+├── .gitignore         <- Files to keep out of version control (e.g. data/binaries).<br>
 ├── run.py             <- run.py with calls to functions in src.
 ├── README.md          <- The top-level README for developers using this project.
 ├── data
