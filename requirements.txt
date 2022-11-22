@@ -1,3 +1,4 @@
+# https://pip.pypa.io/en/stable/reference/requirements-file-format/
 # This is a comment, to show how #-prefixed lines are ignored.
 # It is possible to specify requirements as plain names.
 pytest
