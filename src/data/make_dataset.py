@@ -68,6 +68,7 @@ def files2df():
         "/home/ddavilag/private/data/df_bnpp_datapaths.csv", delimiter=",", dtype=str
     )
     df = pd.DataFrame({"key": keys, "path": file_paths})
+    df.set_index(keys="key", inplace=True)
     print(df)
     cols = ["unique_key", "bnpp_value_log", "BNP_value"]
     test_df = pd.read_csv(
