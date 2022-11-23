@@ -25,6 +25,19 @@ from datasetCreator import ImageSubset
 torch.cuda.empty_cache()
 import seaborn as sns
 
+DATA_PATH = "/home/ddavilag/teams/dsc-180a---a14-[88137]/df_bnpp_datapaths.csv"
+KEY_PATH = "/home/ddavilag/teams/dsc-180a---a14-[88137]/df_bnpp_keys.csv"
+
+df_datapaths = pd.read_csv(DATA_PATH, header=None).T.merge(
+    pd.read_csv(KEY_PATH, header=None).T, left_index=True, right_index=True
+)
+df_datapaths.columns = ["filepaths", "key"]
+df_datapaths.key = df_datapaths.key.apply(lambda x: eval(x))
+df_datapaths.filepaths = df_datapaths.filepaths.apply(lambda x: eval(x))
+df_datapaths = df_datapaths.set_index("key")
+# missing h5py files 7-9
+
+cols = ["unique_key", "bnpp_value_log", "BNP_value"]
 test_df = pd.read_csv(
     "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_test_with_ages.csv",
     usecols=cols,
@@ -37,14 +50,30 @@ val_df = pd.read_csv(
     "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_val_with_ages.csv",
     usecols=cols,
 ).set_index("unique_key")
+train_df["heart"] = train_df["BNP_value"].apply(lambda x: int(x > 400))
+test_df["heart"] = test_df["BNP_value"].apply(lambda x: int(x > 400))
+val_df["heart"] = val_df["BNP_value"].apply(lambda x: int(x > 400))
+
+train_df = train_df.sort_index().merge(df_datapaths, left_index=True, right_index=True)
+test_df = test_df.sort_index().merge(df_datapaths, left_index=True, right_index=True)
+val_df = val_df.sort_index().merge(df_datapaths, left_index=True, right_index=True)
+
+train_df["filepaths"] = train_df["filepaths"].str.replace("jmryan", "ddavilag")
+test_df["filepaths"] = test_df["filepaths"].str.replace("jmryan", "ddavilag")
+val_df["filepaths"] = val_df["filepaths"].str.replace("jmryan", "ddavilag")
+train_df.shape, test_df.shape, val_df.shape
+
+train_df.reset_index(names="unique_key", inplace=True)
+val_df.reset_index(names="unique_key", inplace=True)
+test_df.reset_index(names="unique_key", inplace=True)
+new_valid.reset_index(names="unique_key", inplace=True)
+
+train_df = train_df.to_numpy()
+val_df = val_df.to_numpy()
+test_df = test_df.to_numpy()
 
 
-# test_df = pd.read_csv('/home/mmorocho/teams/dsc-180a---a14-[88137]/BNPP_DT_test_with_ages.csv', usecols = cols).set_index('unique_key')
-# train_df = pd.read_csv('/home/mmorocho/teams/dsc-180a---a14-[88137]/BNPP_DT_train_with_ages.csv', usecols = cols).set_index('unique_key')
-# val_df = pd.read_csv('/home/mmorocho/teams/dsc-180a---a14-[88137]/BNPP_DT_val_with_ages.csv', usecols = cols).set_index('unique_key')
-
-
-def run_all(df_train, df_val, BATCH_SIZE):
+def run_all(df_train, df_val):
     print(BATCH_SIZE)
     train_dataset = PreprocessedImageDataset(df=df_train.to_numpy())
     val_dataset = PreprocessedImageDataset(df=df_val.to_numpy())
@@ -67,19 +96,18 @@ def run_all(df_train, df_val, BATCH_SIZE):
     plt.show()
 
 
-def main():
-    args = sys.argv[1:]
-    if args[0] == "test":
+def main(targets):
+    if targets[0] == "test":
         df_train, df_val = train_test_split(
-            pd.read_csv(TEST_PATH, index_col=0), test_size=0.2
+            pd.read_csv(test_path, index_col=0), test_size=0.2
         )
-    elif args[0] == "train":
-        df_train = pd.read_csv(TRAIN_PATH, index_col=0)
-        df_val = pd.read_csv(VAL_PATH, index_col=0)
+    elif targets[0] == "train":
+        df_train = pd.read_csv(train_path, index_col=0)
+        df_val = pd.read_csv(val_path, index_col=0)
 
-    BATCH_SIZE = eval(args[1])
     run_all(df_train, df_val, BATCH_SIZE)
 
 
 if __name__ == "__main__":
-    main()
+    targets = sys.argv[1:]
+    main(targets)
