@@ -68,12 +68,13 @@ def files2df():
         "/home/ddavilag/private/data/df_bnpp_datapaths.csv", delimiter=",", dtype=str
     )
     df = pd.DataFrame({"key": keys, "path": file_paths})
-
+    print(df)
     cols = ["unique_key", "bnpp_value_log", "BNP_value"]
     test_df = pd.read_csv(
         "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_test_with_ages.csv",
         usecols=cols,
     ).set_index("unique_key")
+    print(test_df)
     train_df = pd.read_csv(
         "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_train_with_ages.csv",
         usecols=cols,
