@@ -21,52 +21,65 @@ from models import VGG
 from train import train1Epoch
 from train import test1Epoch
 from datasetCreator import ImageSubset
+
 torch.cuda.empty_cache()
 import seaborn as sns
 
-import os
-import cv2
+test_df = pd.read_csv(
+    "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_test_with_ages.csv",
+    usecols=cols,
+).set_index("unique_key")
+train_df = pd.read_csv(
+    "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_train_with_ages.csv",
+    usecols=cols,
+).set_index("unique_key")
+val_df = pd.read_csv(
+    "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_val_with_ages.csv",
+    usecols=cols,
+).set_index("unique_key")
 
-test_df = pd.read_csv('/home/mmorocho/teams/dsc-180a---a14-[88137]/BNPP_DT_test_with_ages.csv', usecols = cols).set_index('unique_key')
-train_df = pd.read_csv('/home/mmorocho/teams/dsc-180a---a14-[88137]/BNPP_DT_train_with_ages.csv', usecols = cols).set_index('unique_key')
-val_df = pd.read_csv('/home/mmorocho/teams/dsc-180a---a14-[88137]/BNPP_DT_val_with_ages.csv', usecols = cols).set_index('unique_key')
+
+# test_df = pd.read_csv('/home/mmorocho/teams/dsc-180a---a14-[88137]/BNPP_DT_test_with_ages.csv', usecols = cols).set_index('unique_key')
+# train_df = pd.read_csv('/home/mmorocho/teams/dsc-180a---a14-[88137]/BNPP_DT_train_with_ages.csv', usecols = cols).set_index('unique_key')
+# val_df = pd.read_csv('/home/mmorocho/teams/dsc-180a---a14-[88137]/BNPP_DT_val_with_ages.csv', usecols = cols).set_index('unique_key')
 
 
 def run_all(df_train, df_val, BATCH_SIZE):
     print(BATCH_SIZE)
     train_dataset = PreprocessedImageDataset(df=df_train.to_numpy())
     val_dataset = PreprocessedImageDataset(df=df_val.to_numpy())
-    train_dl = DataLoader(train_dataset, batch_size=BATCH_SIZE, num_workers=0, shuffle=True)
-    val_dl = DataLoader(val_dataset, batch_size=BATCH_SIZE, num_workers = 0, shuffle=False)
-    
+    train_dl = DataLoader(train_dataset, batch_size=16, num_workers=0, shuffle=True)
+    val_dl = DataLoader(val_dataset, batch_size=16, num_workers=0, shuffle=False)
+
     model = resnet152(weights=ResNet152_Weights.DEFAULT)
-    
+
     if torch.cuda.is_available():
-        dev = 'gpu'
+        dev = "gpu"
     else:
-        dev = 'cpu'
-    
-    net = SuperNet(layer_defs=None, is_transfer=True, model = model, lr_scheduler=True, lr = 1e-5, batch_size=BATCH_SIZE)
-    trainer = pl.Trainer(accelerator= dev, max_epochs=100, callbacks=[EarlyStopping(monitor="val_auc", mode="max")],
-                         enable_progress_bar=False, logger=False, enable_checkpointing=False)
+        dev = "cpu"
+
     net.train()
     trainer.fit(net, train_dl, val_dl)
-    
-    plt.plot(np.arange(len(net.val_loss_epoch) - 1),  net.val_loss_epoch[1:])
-    plt.plot(np.arange(len(net.train_loss_epoch)),  net.train_loss_epoch)
-    plt.legend(['Val','Train'])
+
+    plt.plot(np.arange(len(net.val_loss_epoch) - 1), net.val_loss_epoch[1:])
+    plt.plot(np.arange(len(net.train_loss_epoch)), net.train_loss_epoch)
+    plt.legend(["Val", "Train"])
     plt.show()
+
 
 def main():
     args = sys.argv[1:]
-    if args[0] == 'test':
-        df_train, df_val = train_test_split(pd.read_csv(TEST_PATH, index_col=0), test_size = 0.2)
-    elif args[0] == 'train':
+    if args[0] == "test":
+        df_train, df_val = train_test_split(
+            pd.read_csv(TEST_PATH, index_col=0), test_size=0.2
+        )
+    elif args[0] == "train":
         df_train = pd.read_csv(TRAIN_PATH, index_col=0)
         df_val = pd.read_csv(VAL_PATH, index_col=0)
-    
+
     BATCH_SIZE = eval(args[1])
     run_all(df_train, df_val, BATCH_SIZE)
-    
-if __name__ == '__main__':
+
+
+if __name__ == "__main__":
     main()

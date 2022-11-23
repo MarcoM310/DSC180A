@@ -1,0 +1,4 @@
+{
+    "dockerhub-id": "ddav118/meth5:latest",
+    "build-script": "run.py test"
+}
