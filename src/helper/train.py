@@ -15,54 +15,20 @@ def train1Epoch(epoch_index, model, optimizer, loss_fn, training_loader, writer=
     for i, (image, bnpp, _) in tqdm(
         enumerate(training_loader), total=len(training_loader)
     ):
-        # Every data instance is an input + label pair
-
         # image, bnpp, _= data
         image, bnpp = image.to(device, non_blocking=True), bnpp.to(
             device, non_blocking=True
         )
-        # bnpp = bnpp.float()
-
-        # print('image size: ',image.shape)
-        # print(torch.mean(image))
-        # HERE
 
         pred = model(image)
-
-        # print('BNPP size: ',bnpp.shape)
-        # print('Pred size: ',pred.squeeze().shape)
-        # print('BNPP: ',bnpp)
-        # print('Preds: ',pred)
-        # print('Preds: ',pred.squeeze())
 
         loss = loss_fn(torch.squeeze(pred, 1), bnpp)
         # print('loss: ',loss.item())
         # Backpropagation
-        # <<<<<<< HEAD
         optimizer.zero_grad()  # set_to_none=True)
-        # =======
-        optimizer.zero_grad(set_to_none=True)
-        # >>>>>>> 1960aca70cc080d2575d221d6bf6f58b6cdad5df
         loss.backward()
         optimizer.step()
 
-        # HERE
-        #         # Zero your gradients for every batch!
-        #         optimizer.zero_grad()
-
-        #         # Make predictions for this batch
-        #         outputs = model(image)
-
-        #         # Compute the loss and its gradients
-        #         loss = loss_fn(outputs.squeeze(), bnpp)
-        #         loss.backward()
-        #         #print(f"{loss=}")
-
-        #         # Adjust learning weights
-        #         optimizer.step()
-
-        # Gather data and report
-        # running_loss += loss.item()
         losses = np.append(losses, loss.item())
         # writer.add_text('batch_losses', \
         #        f'''batch #{i}\n
