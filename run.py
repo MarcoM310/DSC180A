@@ -1,36 +1,35 @@
-import torch
-import math
-import torch.nn as nn
 import pandas as pd
-import os, time, sys
 import numpy as np
-import pytorch_lightning as pl
 import h5py
-sys.path.append(os.path.dirname(os.path.realpath('.')))
-from torchvision.models import resnet152, ResNet152_Weights
-from torch.utils.data import Dataset, DataLoader
-from torchvision.transforms import functional as Func
-from torchvision import transforms as T
-from PIL import Image
-from torchvision import transforms, utils
 import matplotlib.pyplot as plt
-from sklearn.metrics import roc_auc_score, precision_score
-from sklearn.model_selection import train_test_split
-import glob
-import plotly.graph_objects as go
-import plotly.express as px
-import plotly.io as pio
-from plotly.subplots import make_subplots
-pio.renderers.default = 'svg'
-pio.templates.default = 'plotly_white'
-from helpers.lightning_interface import *
-from helpers.heart_dataset import PreprocessedImageDataset
-from helpers.supernet import SuperNet
-from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+from PIL import Image
+import datetime
+from tqdm import tqdm
 
-TEST_PATH = '/home/jmryan/private/DSC180/A/test/testdata.csv'
-TRAIN_PATH = '/home/jmryan/private/DSC180/A/train/traindata.csv'
-VAL_PATH = '/home/jmryan/private/DSC180/A/val/valdata.csv'
+import torch
+from torch import nn
+import torch.nn.functional as func
+from torch.utils.data import Dataset
+from torch.utils.data import DataLoader
+import torchvision
+import torchvision.transforms as transforms
+from torch.utils.tensorboard import SummaryWriter
+import torch.nn as nn
+import torch.optim as optim
+
+from models import VGG
+from train import train1Epoch
+from train import test1Epoch
+from datasetCreator import ImageSubset
+torch.cuda.empty_cache()
+import seaborn as sns
+
+import os
+import cv2
+
+test_df = pd.read_csv('/home/mmorocho/teams/dsc-180a---a14-[88137]/BNPP_DT_test_with_ages.csv', usecols = cols).set_index('unique_key')
+train_df = pd.read_csv('/home/mmorocho/teams/dsc-180a---a14-[88137]/BNPP_DT_train_with_ages.csv', usecols = cols).set_index('unique_key')
+val_df = pd.read_csv('/home/mmorocho/teams/dsc-180a---a14-[88137]/BNPP_DT_val_with_ages.csv', usecols = cols).set_index('unique_key')
 
 
 def run_all(df_train, df_val, BATCH_SIZE):
