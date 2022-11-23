@@ -11,20 +11,6 @@ from tqdm import tqdm
 HF_PATH = "/home/ddavilag/teams/dsc-180a---a14-[88137]/bnpp_frontalonly_1024_"
 SAVE_PATH = "/home/ddavilag/private/data/bnpp_224_pandas/"
 
-cols = ["unique_key", "bnpp_value_log", "BNP_value"]
-test_df = pd.read_csv(
-    "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_test_with_ages.csv",
-    usecols=cols,
-).set_index("unique_key")
-train_df = pd.read_csv(
-    "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_train_with_ages.csv",
-    usecols=cols,
-).set_index("unique_key")
-val_df = pd.read_csv(
-    "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_val_with_ages.csv",
-    usecols=cols,
-).set_index("unique_key")
-
 
 def read_ins():
     hfs = []
@@ -82,6 +68,20 @@ def files2df():
         "/home/ddavilag/private/data/df_bnpp_datapaths.csv", delimiter=",", dtype=str
     )
     df = pd.DataFrame({"key": keys, "path": file_paths})
+
+    cols = ["unique_key", "bnpp_value_log", "BNP_value"]
+    test_df = pd.read_csv(
+        "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_test_with_ages.csv",
+        usecols=cols,
+    ).set_index("unique_key")
+    train_df = pd.read_csv(
+        "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_train_with_ages.csv",
+        usecols=cols,
+    ).set_index("unique_key")
+    val_df = pd.read_csv(
+        "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_val_with_ages.csv",
+        usecols=cols,
+    ).set_index("unique_key")
 
     train_df = train_df.sort_index().merge(df, left_index=True, right_index=True)
     test_df = test_df.sort_index().merge(df, left_index=True, right_index=True)
