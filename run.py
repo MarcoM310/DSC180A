@@ -25,7 +25,8 @@ from src.helper.models import VGG
 torch.cuda.empty_cache()
 import seaborn as sns
 
-test_path = "/home/ddavilag/private/DSC180A_Final/DSC180A/data/out/testdata.csv"
+test_path = "/home/ddavilag/private/DSC180A_Final/DSC180A/test/testdata.csv"
+# test_path = "/home/ddavilag/private/DSC180A_Final/DSC180A/data/out/testdata.csv"
 train_path = "/home/ddavilag/private/DSC180A_Final/DSC180A/data/out/traindata.csv"
 val_path = "/home/ddavilag/private/DSC180A_Final/DSC180A/data/out/valdata.csv"
 
