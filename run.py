@@ -9,18 +9,18 @@ from tqdm import tqdm
 import torch
 from torch import nn
 import torch.nn.functional as func
-from torch.utils.data import Dataset
-from torch.utils.data import DataLoader
+from torch.utils.data import Dataset, DataLoader
 import torchvision
 import torchvision.transforms as transforms
-from torch.utils.tensorboard import SummaryWriter
-import torch.nn as nn
-import torch.optim as optim
+
+# from torch.utils.tensorboard import SummaryWriter
+# import torch.optim as optim
 
 from models import VGG
-from train import train1Epoch
-from train import test1Epoch
-from src.helper import datasetCreator
+from src.models.train_model import train1Epoch
+from src.models.predict_model import test1Epoch
+from src.data import make_dataset
+from src.features import build_features
 
 torch.cuda.empty_cache()
 import seaborn as sns
