@@ -70,6 +70,9 @@ def save_files():
             sep=",",
         )
     np.array(keys).tofile("/home/ddavilag/private/data/df_bnpp_keys.csv", sep=",")
+    pd.DataFrame({"filepath": file_paths, "keys": keys}).to_pickle(
+        "/home/ddavilag/private/data/df_bnpp_datapaths.pandas"
+    )
 
 
 def files2df():
@@ -92,8 +95,5 @@ def files2df():
     return train_df, test_df, val_df
 
 
-pd.DataFrame({"filepath": file_paths, "keys": keys}).to_pickle(
-    "/home/ddavilag/private/data/df_bnpp_datapaths.pandas"
-)
 read_ins()
 save_files()
