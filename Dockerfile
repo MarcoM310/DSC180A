@@ -14,14 +14,14 @@ LABEL maintainer="UC San Diego ITS/ETS <ets-consult@ucsd.edu>"
 USER root
 RUN apt update
 
-RUN apt-get -y install aria2 nmap traceroute
+# RUN apt-get -y install aria2 nmap traceroute
 
 # 3) install packages using notebook user
 USER jovyan
 
 # RUN conda install -y scikit-learn
 
-RUN pip install --no-cache-dir babypandas geopandas
+# RUN pip install --no-cache-dir babypandas geopandas
 
 # Override command to disable running jupyter notebook at launch
 CMD ["/bin/bash"]
