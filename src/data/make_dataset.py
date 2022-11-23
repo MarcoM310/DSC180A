@@ -57,7 +57,7 @@ def save_files():
     )
 
 
-def files2df():
+def files2df(threshold=400):
     keys = np.genfromtxt(
         "/home/ddavilag/private/data/df_bnpp_keys.csv", delimiter=",", dtype=str
     )
@@ -74,7 +74,6 @@ def files2df():
         "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_test_with_ages.csv",
         usecols=cols,
     ).set_index("unique_key")
-    print(test_df)
     train_df = pd.read_csv(
         "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_train_with_ages.csv",
         usecols=cols,
@@ -92,8 +91,8 @@ def files2df():
     val_df.reset_index(names="unique_key", inplace=True)
     test_df.reset_index(names="unique_key", inplace=True)
 
-    train_df["heart"] = train_df["BNP_value"].apply(lambda x: int(x > 400))
-    test_df["heart"] = test_df["BNP_value"].apply(lambda x: int(x > 400))
-    val_df["heart"] = val_df["BNP_value"].apply(lambda x: int(x > 400))
+    train_df["heart"] = train_df["BNP_value"].apply(lambda x: int(x > threshold))
+    test_df["heart"] = test_df["BNP_value"].apply(lambda x: int(x > threshold))
+    val_df["heart"] = val_df["BNP_value"].apply(lambda x: int(x > threshold))
 
     return train_df, test_df, val_df
