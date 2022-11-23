@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from torch.utils.data import Dataset
 
 
 def files2df(threshold=400):
@@ -41,3 +42,23 @@ def files2df(threshold=400):
     val_df["heart"] = val_df["BNP_value"].apply(lambda x: int(x > threshold))
 
     return train_df, test_df, val_df
+
+
+class PreprocessedImageDataset(Dataset):
+    def __init__(self, df, transform=None, target_transform=None):
+        self.df = df
+
+    def __len__(self):
+        return len(self.df)
+
+    def __getitem__(self, idx):
+        row = self.df[idx, :]
+        # plt.imshow(im,cmap='gray')
+        # plt.show()
+        # returns image, bnpp value log, binary variable for edema
+
+        # resnet
+        return torch.load(row[4]).view(1, 224, 224).expand(3, -1, -1), row[1], row[3]
+
+        # vgg?
+        # return torch.load(row[4]).view(1, 224, 224), row[1], row[3]
