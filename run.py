@@ -20,63 +20,19 @@ import torch.optim as optim
 from models import VGG
 from train import train1Epoch
 from train import test1Epoch
-from datasetCreator import ImageSubset
+from src.helper import datasetCreator
 
 torch.cuda.empty_cache()
 import seaborn as sns
 
-DATA_PATH = "/home/ddavilag/teams/dsc-180a---a14-[88137]/df_bnpp_datapaths.csv"
-KEY_PATH = "/home/ddavilag/teams/dsc-180a---a14-[88137]/df_bnpp_keys.csv"
-
-df_datapaths = pd.read_csv(DATA_PATH, header=None).T.merge(
-    pd.read_csv(KEY_PATH, header=None).T, left_index=True, right_index=True
-)
-df_datapaths.columns = ["filepaths", "key"]
-df_datapaths.key = df_datapaths.key.apply(lambda x: eval(x))
-df_datapaths.filepaths = df_datapaths.filepaths.apply(lambda x: eval(x))
-df_datapaths = df_datapaths.set_index("key")
-# missing h5py files 7-9
-
-cols = ["unique_key", "bnpp_value_log", "BNP_value"]
-test_df = pd.read_csv(
-    "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_test_with_ages.csv",
-    usecols=cols,
-).set_index("unique_key")
-train_df = pd.read_csv(
-    "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_train_with_ages.csv",
-    usecols=cols,
-).set_index("unique_key")
-val_df = pd.read_csv(
-    "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_val_with_ages.csv",
-    usecols=cols,
-).set_index("unique_key")
-train_df["heart"] = train_df["BNP_value"].apply(lambda x: int(x > 400))
-test_df["heart"] = test_df["BNP_value"].apply(lambda x: int(x > 400))
-val_df["heart"] = val_df["BNP_value"].apply(lambda x: int(x > 400))
-
-train_df = train_df.sort_index().merge(df_datapaths, left_index=True, right_index=True)
-test_df = test_df.sort_index().merge(df_datapaths, left_index=True, right_index=True)
-val_df = val_df.sort_index().merge(df_datapaths, left_index=True, right_index=True)
-
-train_df["filepaths"] = train_df["filepaths"].str.replace("jmryan", "ddavilag")
-test_df["filepaths"] = test_df["filepaths"].str.replace("jmryan", "ddavilag")
-val_df["filepaths"] = val_df["filepaths"].str.replace("jmryan", "ddavilag")
-train_df.shape, test_df.shape, val_df.shape
-
-train_df.reset_index(names="unique_key", inplace=True)
-val_df.reset_index(names="unique_key", inplace=True)
-test_df.reset_index(names="unique_key", inplace=True)
-new_valid.reset_index(names="unique_key", inplace=True)
-
-train_df = train_df.to_numpy()
-val_df = val_df.to_numpy()
-test_df = test_df.to_numpy()
+test_path = "/home/jmryan/private/DSC180/A/test/testdata.csv"
+train_path = "/home/jmryan/private/DSC180/A/train/traindata.csv"
+val_path = "/home/jmryan/private/DSC180/A/val/valdata.csv"
 
 
 def run_all(df_train, df_val):
-    print(BATCH_SIZE)
-    train_dataset = PreprocessedImageDataset(df=df_train.to_numpy())
-    val_dataset = PreprocessedImageDataset(df=df_val.to_numpy())
+    train_dataset = datasetCreator(df=df_train)
+    val_dataset = datasetCreator(df=df_val)
     train_dl = DataLoader(train_dataset, batch_size=16, num_workers=0, shuffle=True)
     val_dl = DataLoader(val_dataset, batch_size=16, num_workers=0, shuffle=False)
 
