@@ -13,7 +13,7 @@ SAVE_PATH = "/home/ddavilag/private/data/bnpp_224_pandas/"
 
 def read_ins():
     hfs = []
-    for i in range(0, 8):
+    for i in range(0, 7):
         print(os.path.exists(HF_PATH + str(i) + ".hdf5"))
         hfs.append(h5py.File(HF_PATH + str(i) + ".hdf5", "r"))
     cols = ["unique_key", "bnpp_value_log", "BNP_value"]
