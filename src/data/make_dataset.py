@@ -14,7 +14,9 @@ SAVE_PATH = "/home/ddavilag/private/data/bnpp_224_pandas/"
 
 def read_ins():
     hfs = []
-    for i in range(0, 7):
+    for i in range(11):
+        if i >= 7 and i != 10:
+            continue
         print(os.path.exists(HF_PATH + str(i) + ".hdf5"))
         hfs.append(h5py.File(HF_PATH + str(i) + ".hdf5", "r"))
 
@@ -68,6 +70,8 @@ def files2df():
         "/home/ddavilag/private/data/df_bnpp_datapaths.csv", delimiter=",", dtype=str
     )
     df = pd.DataFrame({"key": keys, "path": file_paths})
+    df.key = df.key.apply(lambda x: eval(x))
+    df.filepaths = df.filepaths.apply(lambda x: eval(x))
     df.set_index(keys="key", inplace=True)
     print(df)
     cols = ["unique_key", "bnpp_value_log", "BNP_value"]
