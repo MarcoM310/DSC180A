@@ -10,25 +10,26 @@ import os
 HF_PATH = "/home/ddavilag/teams/dsc-180a---a14-[88137]/bnpp_frontalonly_1024_"
 SAVE_PATH = "/home/ddavilag/private/data/bnpp_224_pandas/"
 
+cols = ["unique_key", "bnpp_value_log", "BNP_value"]
+test_df = pd.read_csv(
+    "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_test_with_ages.csv",
+    usecols=cols,
+).set_index("unique_key")
+train_df = pd.read_csv(
+    "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_train_with_ages.csv",
+    usecols=cols,
+).set_index("unique_key")
+val_df = pd.read_csv(
+    "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_val_with_ages.csv",
+    usecols=cols,
+).set_index("unique_key")
+
 
 def read_ins():
     hfs = []
     for i in range(0, 7):
         print(os.path.exists(HF_PATH + str(i) + ".hdf5"))
         hfs.append(h5py.File(HF_PATH + str(i) + ".hdf5", "r"))
-    cols = ["unique_key", "bnpp_value_log", "BNP_value"]
-    test_df = pd.read_csv(
-        "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_test_with_ages.csv",
-        usecols=cols,
-    ).set_index("unique_key")
-    train_df = pd.read_csv(
-        "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_train_with_ages.csv",
-        usecols=cols,
-    ).set_index("unique_key")
-    val_df = pd.read_csv(
-        "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_val_with_ages.csv",
-        usecols=cols,
-    ).set_index("unique_key")
 
     train_df["heart"] = train_df["BNP_value"].apply(lambda x: int(x > 400))
     test_df["heart"] = test_df["BNP_value"].apply(lambda x: int(x > 400))
@@ -95,5 +96,4 @@ def files2df():
     return train_df, test_df, val_df
 
 
-read_ins()
 save_files()
