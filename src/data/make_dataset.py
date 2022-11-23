@@ -17,12 +17,8 @@ def read_ins():
     for i in range(11):
         if i >= 7 and i != 10:
             continue
-        print(os.path.exists(HF_PATH + str(i) + ".hdf5"))
+        # print(os.path.exists(HF_PATH + str(i) + ".hdf5"))
         hfs.append(h5py.File(HF_PATH + str(i) + ".hdf5", "r"))
-
-    train_df["heart"] = train_df["BNP_value"].apply(lambda x: int(x > 400))
-    test_df["heart"] = test_df["BNP_value"].apply(lambda x: int(x > 400))
-    val_df["heart"] = val_df["BNP_value"].apply(lambda x: int(x > 400))
 
     return hfs, train_df, test_df, val_df
 
@@ -42,7 +38,6 @@ def save_files():
 
     for hf in hfs:
         for i, key in tqdm(enumerate(list(hf.keys())), total=len(list(hf.keys()))):
-
             im = hf[key][:, :]
             im = change_im(im)
             folder_path = SAVE_PATH + str(key) + "/"
@@ -73,7 +68,7 @@ def files2df():
     df.key = df.key.apply(lambda x: eval(x))
     df.path = df.path.apply(lambda x: eval(x))
     df.set_index(keys="key", inplace=True)
-    print(df)
+
     cols = ["unique_key", "bnpp_value_log", "BNP_value"]
     test_df = pd.read_csv(
         "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_test_with_ages.csv",
@@ -96,5 +91,9 @@ def files2df():
     train_df.reset_index(names="unique_key", inplace=True)
     val_df.reset_index(names="unique_key", inplace=True)
     test_df.reset_index(names="unique_key", inplace=True)
+
+    train_df["heart"] = train_df["BNP_value"].apply(lambda x: int(x > 400))
+    test_df["heart"] = test_df["BNP_value"].apply(lambda x: int(x > 400))
+    val_df["heart"] = val_df["BNP_value"].apply(lambda x: int(x > 400))
 
     return train_df, test_df, val_df
