@@ -6,6 +6,7 @@ from torchvision.transforms import functional as Func
 from torchvision import transforms as T
 from PIL import Image
 import os
+from tqdm import tqdm
 
 HF_PATH = "/home/ddavilag/teams/dsc-180a---a14-[88137]/bnpp_frontalonly_1024_"
 SAVE_PATH = "/home/ddavilag/private/data/bnpp_224_pandas/"
@@ -49,12 +50,11 @@ def change_im(im):
 
 def save_files():
     hfs, train_df, test_df, val_df = read_ins()
-    keys = []
-    file_paths = []
-    i = 0
+    keys, file_paths = [], []
+
     for hf in hfs:
-        for key in list(hf.keys()):
-            i += 1
+        for i, key in tqdm(enumerate(list(hf.keys())), total=len(list(hf.keys()))):
+
             im = hf[key][:, :]
             im = change_im(im)
             folder_path = SAVE_PATH + str(key) + "/"
@@ -64,8 +64,6 @@ def save_files():
             torch.save(im, file_path)
             keys.append(key)
             file_paths.append(file_path)
-            if i % 500 == 0:
-                print(i)
         np.array(file_paths).tofile(
             "/home/ddavilag/private/data/df_bnpp_datapaths.csv",
             sep=",",
@@ -94,6 +92,3 @@ def files2df():
     test_df.reset_index(names="unique_key", inplace=True)
 
     return train_df, test_df, val_df
-
-
-save_files()
