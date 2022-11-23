@@ -71,7 +71,7 @@ def files2df():
     )
     df = pd.DataFrame({"key": keys, "path": file_paths})
     df.key = df.key.apply(lambda x: eval(x))
-    df.filepaths = df.filepaths.apply(lambda x: eval(x))
+    df.filepaths = df.paths.apply(lambda x: eval(x))
     df.set_index(keys="key", inplace=True)
     print(df)
     cols = ["unique_key", "bnpp_value_log", "BNP_value"]
