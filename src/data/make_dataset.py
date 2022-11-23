@@ -19,7 +19,19 @@ def read_ins():
             continue
         # print(os.path.exists(HF_PATH + str(i) + ".hdf5"))
         hfs.append(h5py.File(HF_PATH + str(i) + ".hdf5", "r"))
-
+    cols = ["unique_key", "bnpp_value_log", "BNP_value"]
+    test_df = pd.read_csv(
+        "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_test_with_ages.csv",
+        usecols=cols,
+    ).set_index("unique_key")
+    train_df = pd.read_csv(
+        "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_train_with_ages.csv",
+        usecols=cols,
+    ).set_index("unique_key")
+    val_df = pd.read_csv(
+        "/home/ddavilag/teams/dsc-180a---a14-[88137]/BNPP_DT_val_with_ages.csv",
+        usecols=cols,
+    ).set_index("unique_key")
     return hfs, train_df, test_df, val_df
 
 
