@@ -16,18 +16,18 @@ import torchvision.transforms as transforms
 # from torch.utils.tensorboard import SummaryWriter
 # import torch.optim as optim
 
-from models import VGG
 from src.models.train_model import train1Epoch
 from src.models.predict_model import test1Epoch
 from src.data import make_dataset
 from src.features import build_features
+from features.build_features import files2df
 
 torch.cuda.empty_cache()
 import seaborn as sns
 
-test_path = "/home/jmryan/private/DSC180/A/test/testdata.csv"
-train_path = "/home/jmryan/private/DSC180/A/train/traindata.csv"
-val_path = "/home/jmryan/private/DSC180/A/val/valdata.csv"
+test_path = "/home/ddavilag/private/DSC180A_Final/DSC180A/data/out/testdata.csv"
+train_path = "/home/ddavilag/private/DSC180A_Final/DSC180A/data/out/traindata.csv"
+val_path = "/home/ddavilag/private/DSC180A_Final/DSC180A/data/out/valdata.csv"
 
 
 def run_all(df_train, df_val):
@@ -53,6 +53,7 @@ def run_all(df_train, df_val):
 
 
 def main(targets):
+    train_df, test_df, val_df = files2df()
     if targets[0] == "test":
         df_train, df_val = train_test_split(
             pd.read_csv(test_path, index_col=0), test_size=0.2
