@@ -23,3 +23,17 @@ def test1Epoch(epoch_index, model, loss_fn, valid_loader, tb_writer=None):
             image.detach()
             bnpp.detach()
     return np.mean(losses)
+
+
+def testPretrained(model, valid_loader):
+    ### tests pretrained model on validation set
+    loss_fn = nn.L1Loss().to(DEVICE)
+    optimizer = optim.Adam(model.parameters(), lr=LR)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer)
+    tlosses, vlosses = np.array([]), np.array([])
+    # loss on unseen test set
+    for param in model.parameters():
+        param.requires_grad = False
+    with torch.no_grad():
+        test_loss = test1Epoch(epoch_number, model, loss_fn, test_loader)
+    print("test loss:", test_loss)

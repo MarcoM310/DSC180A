@@ -86,9 +86,25 @@ def run_all(df_val, df_train=None):
     else:
 
         # TODO: use pretrained model
-        resnet = torch.load("src/models/resnet152.pt")
-        print("loaded pretrained model!")
+        resnet = resnet152(weights="ResNet152_Weights.DEFAULT")
+        resnet.fc = nn.Linear(in_features=2048, out_features=1, bias=True)
+        resnet.to(DEVICE)
+        optimizer = optim.Adam(resnet.parameters(), lr=LR)
+
+        checkpoint = torch.load("src/models/resnet152.pt")
+        resnet.load_state_dict(checkpoint["model_state_dict"])
+        optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+        epoch = checkpoint["epoch"]
+        loss = checkpoint["loss"]
+        loss_fn = nn.L1Loss().to(DEVICE)
+        print("loaded pretrained model")
+
         resnet.eval()
+        for param in resnet.parameters():
+            param.requires_grad = False
+        with torch.no_grad():
+            test_loss = test1Epoch(0, resnet, loss_fn, valid_loader)
+            print(f"Overall Test Loss: {test_loss}")
 
 
 def main(targets):
