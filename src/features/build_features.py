@@ -19,7 +19,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 BATCH_SIZE = 32
-NUM_WORKERS = 4
+NUM_WORKERS = 1
 PIN_MEMORY = True
 
 

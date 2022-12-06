@@ -1,0 +1,12 @@
+ssh ddavilag@dsmlp-login.ucsd.edu
+launch-scipy-ml.sh
+
+ON SEPARATE TERMINAL
+ssh -N -L 8889:127.0.0.1:<port> ddavilag@dsmlp-login.ucsd.edu
+
+ON GOOGLE, OPEN:
+http://localhost:8889/user/ddavilag/tree/
+or http://localhost:8889/user/ddavilag/lab/
+
+GitHub Personal Access Token:
+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
