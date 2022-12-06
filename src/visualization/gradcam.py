@@ -13,7 +13,6 @@ from torch.utils.data import Dataset, DataLoader
 from torchvision.models import resnet152
 import torchvision
 import torchvision.transforms as transforms
-from torch.utils.tensorboard import SummaryWriter
 import torch.nn as nn
 import torch.optim as optim
 import argparse
@@ -46,7 +45,8 @@ from pytorch_grad_cam.utils.model_targets import (
 from pytorch_grad_cam.utils.image import show_cam_on_image
 
 
-def gradcam_viz():
+def gradcam_viz(model, test_set):
+    # this is the code for a normal case
     resnet.train()
     for param in resnet.parameters():
         param.requires_grad = True
