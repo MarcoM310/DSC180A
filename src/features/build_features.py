@@ -18,7 +18,7 @@ import torchvision.transforms as transforms
 import torch.nn as nn
 import torch.optim as optim
 
-BATCH_SIZE = 32
+BATCH_SIZE = 1
 NUM_WORKERS = 1
 PIN_MEMORY = True
 
