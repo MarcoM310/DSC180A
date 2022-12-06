@@ -75,7 +75,7 @@ class PreprocessedImageDataset(Dataset):
         row = self.df[idx, :]
         # returns image, bnpp value log, binary variable for edema
 
-        return torch.load(row[3]).view(1, 224, 224).expand(3, -1, -1), row[1], row[3]
+        return torch.load(row[3]).view(1, 224, 224).expand(3, -1, -1), row[1], row[4]
 
 
 def Loader(dataset, mode):
