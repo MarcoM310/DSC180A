@@ -77,4 +77,25 @@ def get_args():
 
 
 args = get_args()
-rgb_img = np.float32((valid_set[0][0]).T)
+
+resnet.train()
+for param in resnet.parameters():
+    param.requires_grad = True
+resnet.eval()
+target_layers = [resnet.layer4[-1]]
+input_tensor = test_set[7][0].unsqueeze(0).to(device)
+
+targets = [RawScoresOutputTarget()]
+
+rgb_img = np.float32((test_set[7][0]).T)
+target_layers = [resnet.layer4]
+with GradCAM(model=resnet, target_layers=target_layers) as cam:
+    grayscale_cams = cam(
+        input_tensor=input_tensor, targets=targets, aug_smooth=True
+    )  # ,eigen_smooth=True)
+    cam_image = show_cam_on_image(rgb_img, grayscale_cams[0, :], use_rgb=True)
+cam = np.uint8(255 * grayscale_cams[0, :])
+cam = cv2.merge([cam, cam, cam])
+images = np.hstack((np.uint8(255 * rgb_img), cam, cam_image))
+print("Normal Case GradCAM")
+Image.fromarray(images).transpose(Image.ROTATE_270).transpose(Image.FLIP_LEFT_RIGHT)

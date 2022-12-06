@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import h5py
 import matplotlib.pyplot as plt
+import seaborn as sns
 from PIL import Image
 import datetime
 from tqdm import tqdm
@@ -11,8 +12,36 @@ import torch
 from torch import nn
 import torch.nn.functional as func
 from torch.utils.data import Dataset, DataLoader
+from torchvision.models import resnet152
 import torchvision
 import torchvision.transforms as transforms
+import torch.nn as nn
+import torch.optim as optim
+
+torch.cuda.empty_cache()
+torch.backends.cudnn.benchmark = True
+
+import os
+import cv2
+import argparse
+from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, roc_curve
+from scipy.stats import pearsonr
+
+from pytorch_grad_cam import (
+    GradCAM,
+    HiResCAM,
+    ScoreCAM,
+    GradCAMPlusPlus,
+    AblationCAM,
+    XGradCAM,
+    EigenCAM,
+    FullGrad,
+)
+from pytorch_grad_cam.utils.model_targets import (
+    ClassifierOutputTarget,
+    RawScoresOutputTarget,
+)
+from pytorch_grad_cam.utils.image import show_cam_on_image
 
 # from torch.utils.tensorboard import SummaryWriter
 # import torch.optim as optim
@@ -24,8 +53,6 @@ from src.features.build_features import files2df, PreprocessedImageDataset, Load
 from src.helper.models import VGG
 from src.visualization.visualize import PlotTrainValLoss
 
-torch.cuda.empty_cache()
-import seaborn as sns
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 test_path = "/home/ddavilag/private/DSC180A_Final/DSC180A/test/testdata.csv"
