@@ -65,15 +65,16 @@ def files2df(threshold=400):
 
 
 class PreprocessedImageDataset(Dataset):
-    def __init__(self, df, transform=None, target_transform=None):
+    def __init__(self, df):
         self.df = df
 
     def __len__(self):
         return len(self.df)
 
     def __getitem__(self, idx):
-        row = self.df[idx, :]
-        print(row)
+        # print(self.df.loc[idx,:])
+        row = self.df.loc[idx, :]
+        # print(row)
         # returns image, bnpp value log, binary variable for edema
 
         return torch.load(row[3]).view(1, 224, 224).expand(3, -1, -1), row[1], row[4]
