@@ -73,6 +73,7 @@ class PreprocessedImageDataset(Dataset):
 
     def __getitem__(self, idx):
         row = self.df[idx, :]
+        print(row)
         # returns image, bnpp value log, binary variable for edema
 
         return torch.load(row[3]).view(1, 224, 224).expand(3, -1, -1), row[1], row[4]
@@ -80,6 +81,6 @@ class PreprocessedImageDataset(Dataset):
 
 def Loader(dataset, mode):
     if mode == "train":
-        return DataLoader(dataset, batch_size=1, shuffle=True, num_workers=NUM_WORKERS)
+        return DataLoader(dataset, batch_size=1, shuffle=True)
     else:
-        return DataLoader(dataset, batch_size=1, shuffle=False, num_workers=NUM_WORKERS)
+        return DataLoader(dataset, batch_size=1, shuffle=False)

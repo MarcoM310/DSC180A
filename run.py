@@ -77,6 +77,7 @@ def run_all(df_val, df_train=None):
 
         train_set = PreprocessedImageDataset(df=df_train)
         train_loader = Loader(train_set, mode="train")
+        print(next(iter(train_loader)))
         resnet = resnet152(pretrained=True)
         resnet.fc = nn.Linear(in_features=2048, out_features=1, bias=True)
         resnet.to(DEVICE)
