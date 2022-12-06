@@ -9,7 +9,8 @@ docker push <username>/<image>:<tag>
 # on the first Terminal
 ssh <username>@dsmlp-login.ucsd.edu
 # For repeatedly using the pod or sharing the custom image: "-n <node-number>"
-launch-scipy-ml.sh -i <username>/<image>:<tag> -P Always -n <node-number>
+launch-scipy-ml.sh -i <username>/<image>:<tag> -g 1 -P Always -n <node-number>
 
 
-# IF LAUNCH FAILS: kubectl logs <pod-name>
+# IF LAUNCH FAILS: 
+kubectl logs <pod-name>

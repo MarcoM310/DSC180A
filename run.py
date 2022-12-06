@@ -60,8 +60,6 @@ def run_all(df_val, df_train=None):
         resnet = torch.load("resnet152.pt")
         resnet.eval()
 
-    optimizer = optim.Adam(resnet.parameters(), lr=LR)
-
 
 def main(targets):
     if targets[0] == "test":

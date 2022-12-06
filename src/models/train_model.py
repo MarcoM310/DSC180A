@@ -62,7 +62,6 @@ def trainAndSave(model, train_loader, valid_loader, num_epochs=EPOCHS):
 
         epoch_number += 1
         scheduler.step(avg_vloss)
-        # TODO: save model
         if best_vloss > avg_vloss:
             best_vloss = avg_vloss
             torch.save(
@@ -70,7 +69,9 @@ def trainAndSave(model, train_loader, valid_loader, num_epochs=EPOCHS):
                     "epoch": epoch_number,
                     "model_state_dict": model.state_dict(),
                     "optimizer_state_dict": optimizer.state_dict(),
-                    "loss": loss,
+                    "scheduler_state_dict": scheduler.state_dict(),
+                    "loss": tlosses[-1],
                 },
-                "src/models/resnet.pt",
+                "resnet.pt",
             )
+            print("model saved!")
