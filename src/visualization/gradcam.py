@@ -46,56 +46,25 @@ from pytorch_grad_cam.utils.model_targets import (
 from pytorch_grad_cam.utils.image import show_cam_on_image
 
 
-def get_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-f")
-    parser.add_argument("--use-cuda", action="store_true", default=False)
-    parser.add_argument("--method", type=str, default="gradcam", choices=["gradcam"])
-    parser.add_argument(
-        "--image-path", type=str, default="./examples/both.png", help="Input image path"
-    )
-    parser.add_argument(
-        "--aug_smooth",
-        action="store_true",
-        help="Apply test time augmentation to smooth the CAM",
-    )
-    parser.add_argument(
-        "--eigen_smooth",
-        action="store_true",
-        help="Reduce noise by taking the first principle componenet"
-        "of cam_weights*activations",
-    )
+def gradcam_viz():
+    resnet.train()
+    for param in resnet.parameters():
+        param.requires_grad = True
+    resnet.eval()
+    target_layers = [resnet.layer4[-1]]
+    input_tensor = test_set[7][0].unsqueeze(0).to(device)
 
-    args = parser.parse_args()
-    args.use_cuda = args.use_cuda and torch.cuda.is_available()
-    if args.use_cuda:
-        print("Using GPU for acceleration")
-    else:
-        print("Using CPU for computation")
+    targets = [RawScoresOutputTarget()]
 
-    return args
-
-
-args = get_args()
-
-resnet.train()
-for param in resnet.parameters():
-    param.requires_grad = True
-resnet.eval()
-target_layers = [resnet.layer4[-1]]
-input_tensor = test_set[7][0].unsqueeze(0).to(device)
-
-targets = [RawScoresOutputTarget()]
-
-rgb_img = np.float32((test_set[7][0]).T)
-target_layers = [resnet.layer4]
-with GradCAM(model=resnet, target_layers=target_layers) as cam:
-    grayscale_cams = cam(
-        input_tensor=input_tensor, targets=targets, aug_smooth=True
-    )  # ,eigen_smooth=True)
-    cam_image = show_cam_on_image(rgb_img, grayscale_cams[0, :], use_rgb=True)
-cam = np.uint8(255 * grayscale_cams[0, :])
-cam = cv2.merge([cam, cam, cam])
-images = np.hstack((np.uint8(255 * rgb_img), cam, cam_image))
-print("Normal Case GradCAM")
-Image.fromarray(images).transpose(Image.ROTATE_270).transpose(Image.FLIP_LEFT_RIGHT)
+    rgb_img = np.float32((test_set[7][0]).T)
+    target_layers = [resnet.layer4]
+    with GradCAM(model=resnet, target_layers=target_layers) as cam:
+        grayscale_cams = cam(
+            input_tensor=input_tensor, targets=targets, aug_smooth=True
+        )  # ,eigen_smooth=True)
+        cam_image = show_cam_on_image(rgb_img, grayscale_cams[0, :], use_rgb=True)
+    cam = np.uint8(255 * grayscale_cams[0, :])
+    cam = cv2.merge([cam, cam, cam])
+    images = np.hstack((np.uint8(255 * rgb_img), cam, cam_image))
+    print("Normal Case GradCAM")
+    Image.fromarray(images).transpose(Image.ROTATE_270).transpose(Image.FLIP_LEFT_RIGHT)

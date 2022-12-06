@@ -93,10 +93,12 @@ def run_all(df_val, df_train=None):
 
 def main(targets):
     if targets[0] == "test":
+        print("Testing pretrained model on test set...")
         ### if test, use pretrained model on the test set (on eval mode, ~100 rows), output predictions/visualizations
         df_test = pd.read_csv(test_path, index_col=0)
         run_all(df_test)
     elif targets[0] == "train":
+        print("Training model on train set...")
         ### 1) if train, use train set (on train mode), save model
         # 2) use model on val set (on eval mode), output predictions/visualizations
         df_train = pd.read_csv(train_path, index_col=0)
