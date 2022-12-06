@@ -19,8 +19,8 @@ import torch.nn as nn
 import torch.optim as optim
 
 BATCH_SIZE = 1
-NUM_WORKERS = 1
-PIN_MEMORY = True
+NUM_WORKERS = 0
+PIN_MEMORY = False
 
 
 def files2df(threshold=400):
@@ -80,13 +80,6 @@ class PreprocessedImageDataset(Dataset):
 
 def Loader(dataset, mode):
     if mode == "train":
-        shuffle = True
+        return DataLoader(dataset, batch_size=1, shuffle=True, num_workers=NUM_WORKERS)
     else:
-        shuffle = False
-    return DataLoader(
-        dataset,
-        batch_size=BATCH_SIZE,
-        shuffle=shuffle,
-        num_workers=NUM_WORKERS,
-        pin_memory=PIN_MEMORY,
-    )
+        return DataLoader(dataset, batch_size=1, shuffle=False, num_workers=NUM_WORKERS)
