@@ -16,6 +16,7 @@ import torchvision.transforms as transforms
 from torch.utils.tensorboard import SummaryWriter
 import torch.nn as nn
 import torch.optim as optim
+import argparse
 
 from models import VGG, ResNet
 from train import train1Epoch, test1Epoch
@@ -43,3 +44,37 @@ from pytorch_grad_cam.utils.model_targets import (
     RawScoresOutputTarget,
 )
 from pytorch_grad_cam.utils.image import show_cam_on_image
+
+
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-f")
+    parser.add_argument("--use-cuda", action="store_true", default=False)
+    parser.add_argument("--method", type=str, default="gradcam", choices=["gradcam"])
+    parser.add_argument(
+        "--image-path", type=str, default="./examples/both.png", help="Input image path"
+    )
+    parser.add_argument(
+        "--aug_smooth",
+        action="store_true",
+        help="Apply test time augmentation to smooth the CAM",
+    )
+    parser.add_argument(
+        "--eigen_smooth",
+        action="store_true",
+        help="Reduce noise by taking the first principle componenet"
+        "of cam_weights*activations",
+    )
+
+    args = parser.parse_args()
+    args.use_cuda = args.use_cuda and torch.cuda.is_available()
+    if args.use_cuda:
+        print("Using GPU for acceleration")
+    else:
+        print("Using CPU for computation")
+
+    return args
+
+
+args = get_args()
+rgb_img = np.float32((valid_set[0][0]).T)
