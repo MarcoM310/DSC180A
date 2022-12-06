@@ -92,7 +92,7 @@ def run_all(df_val, df_train=None):
         resnet.to(DEVICE)
         optimizer = optim.Adam(resnet.parameters(), lr=LR)
 
-        checkpoint = torch.load("src/models/resnet152.pt")
+        checkpoint = torch.load("resnet152.pt")
         resnet.load_state_dict(checkpoint["model_state_dict"])
         optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
         epoch = checkpoint["epoch"]
