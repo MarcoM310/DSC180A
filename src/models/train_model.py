@@ -46,6 +46,28 @@ def train1Epoch(epoch_index, model, optimizer, loss_fn, training_loader, writer=
     return np.mean(losses)
 
 
+def test1Epoch(epoch_index, model, loss_fn, valid_loader, tb_writer=None):
+    model.eval()
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    losses = np.array([])
+
+    with torch.no_grad():
+        for i, (image, bnpp, _) in tqdm(
+            enumerate(valid_loader), total=len(valid_loader)
+        ):
+            image, bnpp = image.to(device, non_blocking=True), bnpp.to(
+                device, non_blocking=True
+            )
+
+            pred = model(image)
+            loss = loss_fn(torch.squeeze(pred, 1), bnpp).detach()
+            losses = np.append(losses, loss.item())
+            image.detach()
+            bnpp.detach()
+    return np.mean(losses)
+
+
 def trainAndSave(model, train_loader, valid_loader, num_epochs=EPOCHS):
     ### trains model and saves it to "src/models/resnet.pt"
     # also checks performance on validation set each epoch
