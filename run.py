@@ -109,5 +109,7 @@ def main(targets):
 if __name__ == "__main__":
     ### Run with `python run.py test` or `python run.py train`
     ### target: train or test
+    print("Running run.py...")
+    print(DEVICE)
     targets = sys.argv[1:]
     main(targets)
