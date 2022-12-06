@@ -11,6 +11,7 @@ ssh <username>@dsmlp-login.ucsd.edu
 # For repeatedly using the pod or sharing the custom image: "-n <node-number>"
 launch-scipy-ml.sh -i <username>/<image>:<tag> -g 1 -P Always -n <node-number>
 
+# IN THE PAST WE USED: launch-scipy-ml.sh -g 1 -W DSC180A_FA22_A00 -G dsc180aa1488137100014352
 
 # IF LAUNCH FAILS: 
 kubectl logs <pod-name>
