@@ -10,14 +10,14 @@ import torch
 from torch import nn
 import torch.nn.functional as func
 from torch.utils.data import Dataset, DataLoader
-from torchvision.models import resnet152
+from torchvision.models import model152
 import torchvision
 import torchvision.transforms as transforms
 import torch.nn as nn
 import torch.optim as optim
 import argparse
 
-from models import VGG, ResNet
+from models import VGG, model
 from train import train1Epoch, test1Epoch
 
 torch.cuda.empty_cache()
@@ -45,21 +45,21 @@ from pytorch_grad_cam.utils.model_targets import (
 from pytorch_grad_cam.utils.image import show_cam_on_image
 
 
-def gradcam_viz(model, test_set):
+def gradcam_viz(model, test_set, device):
     # this is the code for a normal case
-    # resnet already trainedin run.py
-    # resnet.train()
-    # for param in resnet.parameters():
+    # model already trainedin run.py
+    # model.train()
+    # for param in model.parameters():
     #     param.requires_grad = True
-    # resnet.eval()
-    target_layers = [resnet.layer4[-1]]
+    # model.eval()
+    target_layers = [model.layer4[-1]]
     input_tensor = test_set[7][0].unsqueeze(0).to(device)
 
     targets = [RawScoresOutputTarget()]
 
     rgb_img = np.float32((test_set[7][0]).T)
-    target_layers = [resnet.layer4]
-    with GradCAM(model=resnet, target_layers=target_layers) as cam:
+    target_layers = [model.layer4]
+    with GradCAM(model=model, target_layers=target_layers) as cam:
         grayscale_cams = cam(
             input_tensor=input_tensor, targets=targets, aug_smooth=True
         )  # ,eigen_smooth=True)
