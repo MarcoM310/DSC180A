@@ -47,10 +47,11 @@ from pytorch_grad_cam.utils.image import show_cam_on_image
 
 def gradcam_viz(model, test_set):
     # this is the code for a normal case
-    resnet.train()
-    for param in resnet.parameters():
-        param.requires_grad = True
-    resnet.eval()
+    # resnet already trainedin run.py
+    # resnet.train()
+    # for param in resnet.parameters():
+    #     param.requires_grad = True
+    # resnet.eval()
     target_layers = [resnet.layer4[-1]]
     input_tensor = test_set[7][0].unsqueeze(0).to(device)
 
