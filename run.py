@@ -122,6 +122,7 @@ def main(targets):
         df_val = pd.read_csv(val_path, index_col=0)
         df_train = df_train.head(100)
         df_val = df_val.head(100)
+        display(df_train.head(), df_val.head())
         run_all(df_train, df_val)
 
 
