@@ -1,6 +1,10 @@
 import numpy as np
 import pandas as pd
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
+
+BATCH_SIZE = 32
+NUM_WORKERS = 4
+PIN_MEMORY = True
 
 
 def files2df(threshold=400):
@@ -53,12 +57,20 @@ class PreprocessedImageDataset(Dataset):
 
     def __getitem__(self, idx):
         row = self.df[idx, :]
-        # plt.imshow(im,cmap='gray')
-        # plt.show()
         # returns image, bnpp value log, binary variable for edema
 
-        # resnet
         return torch.load(row[4]).view(1, 224, 224).expand(3, -1, -1), row[1], row[3]
 
-        # vgg?
-        # return torch.load(row[4]).view(1, 224, 224), row[1], row[3]
+
+def Loader(dataset, mode):
+    if mode == "train":
+        shuffle = True
+    else:
+        shuffle = False
+    return DataLoader(
+        dataset,
+        batch_size=BATCH_SIZE,
+        shuffle=shuffle,
+        num_workers=NUM_WORKERS,
+        pin_memory=PIN_MEMORY,
+    )

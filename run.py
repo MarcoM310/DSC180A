@@ -16,104 +16,68 @@ import torchvision.transforms as transforms
 # from torch.utils.tensorboard import SummaryWriter
 # import torch.optim as optim
 
-from src.models.train_model import train1Epoch
+from src.models.train_model import train1Epoch, trainAndSave
 from src.models.predict_model import test1Epoch
 from src.data import make_dataset
-from src.features.build_features import files2df, PreprocessedImageDataset
+from src.features.build_features import files2df, PreprocessedImageDataset, Loader
 from src.helper.models import VGG
+from src.visualization.visualize import PlotTrainValLoss
 
 torch.cuda.empty_cache()
 import seaborn as sns
 
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 test_path = "/home/ddavilag/private/DSC180A_Final/DSC180A/test/testdata.csv"
-# test_path = "/home/ddavilag/private/DSC180A_Final/DSC180A/data/out/testdata.csv"
 train_path = "/home/ddavilag/private/DSC180A_Final/DSC180A/data/out/traindata.csv"
 val_path = "/home/ddavilag/private/DSC180A_Final/DSC180A/data/out/valdata.csv"
+LR = 0.0001
+EPOCHS = 5
 
 
-def run_all(df_train, df_val):
-    train_set = PreprocessedImageDataset(df=df_train)
-    train_loader = DataLoader(
-        train_set,
-        batch_size=16,
-        shuffle=True,
-        num_workers=0,
-        pin_memory=pin_memory,
-    )
+def run_all(df_val, df_train=None):
+    ### 1) if train != None: use train set (on train mode)
+    # 2) save model
+    # 3) use model on val set (on eval mode)
+    # 4) output predictions/visualizations
+    # Otherwise, use pretrained model on the test set (on eval mode, ~100 rows), output predictions/visualizations
+
     valid_set = PreprocessedImageDataset(df=df_val)
-    valid_loader = DataLoader(
-        valid_set,
-        batch_size=16,
-        shuffle=False,
-        num_workers=0,
-        pin_memory=pin_memory,
-    )
+    valid_loader = Loader(valid_set, mode="eval")
 
-    if torch.cuda.is_available():
-        dev = "gpu"
+    if df_train is not None:
+        # training brand new ResNet model
+
+        train_set = PreprocessedImageDataset(df=df_train)
+        train_loader = Loader(train_set, mode="train")
+        resnet = resnet152(pretrained=True)
+        resnet.fc = nn.Linear(in_features=2048, out_features=1, bias=True)
+        resnet.to(DEVICE)
+        # model = VGG("VGG16").to(DEVICE)
+        trainAndSave(resnet, train_loader, valid_loader)
     else:
-        dev = "cpu"
 
-    model = VGG("VGG16").to(device)
+        # TODO: use pretrained model
+        resnet = torch.load("resnet152.pt")
+        resnet.eval()
 
-    loss_fn = nn.L1Loss().to(device)
-    optimizer = optim.Adam(model.parameters(), lr=0.0001)
-    epoch_number = 0
-
-    EPOCHS = 15
-
-    # the scheduler
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer)
-
-    tlosses, vlosses = np.array([]), np.array([])
-
-    for epoch in range(EPOCHS):
-        print("EPOCH {}:".format(epoch_number + 1))
-
-        for param in model.parameters():
-            param.requires_grad = True
-        avg_tloss = train1Epoch(
-            epoch_number, model, optimizer, loss_fn, train_loader
-        )  # , writer)
-
-        for param in model.parameters():
-            param.requires_grad = False
-        with torch.no_grad():
-            avg_vloss = test1Epoch(epoch_number, model, loss_fn, valid_loader)
-
-        print("LOSS train {} valid {}".format(avg_tloss, avg_vloss))
-
-        tlosses = np.append(tlosses, avg_tloss)
-        vlosses = np.append(vlosses, avg_vloss)
-        print(tlosses)
-
-        epoch_number += 1
-        scheduler.step(avg_vloss)
-
-    epochs = np.arange(1, EPOCHS + 1)
-    df = pd.DataFrame(data={"train loss": tlosses, "valid loss": vlosses})
-    sns.set(style="whitegrid")
-    g = sns.FacetGrid(df, height=6)
-    g = g.map(sns.lineplot, x=epochs, y=tlosses, marker="o", label="train")
-    g = g.map(sns.lineplot, x=epochs, y=vlosses, color="red", marker="o", label="valid")
-    g.set(ylim=(0, None))
-    g.add_legend()
-    plt.xticks(epochs)
-    plt.show()
+    optimizer = optim.Adam(resnet.parameters(), lr=LR)
 
 
 def main(targets):
     if targets[0] == "test":
-        df_train, df_val = train_test_split(
-            pd.read_csv(test_path, index_col=0), test_size=0.2
-        )
+        ### if test, use pretrained model on the test set (on eval mode, ~100 rows), output predictions/visualizations
+        df_test = pd.read_csv(test_path, index_col=0)
+        run_all(df_test)
     elif targets[0] == "train":
+        ### 1) if train, use train set (on train mode), save model
+        # 2) use model on val set (on eval mode), output predictions/visualizations
         df_train = pd.read_csv(train_path, index_col=0)
         df_val = pd.read_csv(val_path, index_col=0)
-
-    run_all(df_train, df_val)
+        run_all(df_train, df_val)
 
 
 if __name__ == "__main__":
+    ### Run with `python run.py test` or `python run.py train`
+    ### target: train or test
     targets = sys.argv[1:]
     main(targets)
