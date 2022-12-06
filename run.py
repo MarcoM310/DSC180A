@@ -77,7 +77,7 @@ def run_all(df_val, df_train=None):
 
         train_set = PreprocessedImageDataset(df=df_train)
         train_loader = Loader(train_set, mode="train")
-        resnet = resnet152(weights="ResNet152_Weights.DEFAULT")
+        resnet = resnet152(pretrained=True)
         resnet.fc = nn.Linear(in_features=2048, out_features=1, bias=True)
         resnet.to(DEVICE)
         # model = VGG("VGG16").to(DEVICE)
@@ -86,7 +86,7 @@ def run_all(df_val, df_train=None):
     else:
 
         # TODO: use pretrained model
-        resnet = resnet152(weights="ResNet152_Weights.DEFAULT")
+        resnet = resnet152(pretrained=True)  # weights="ResNet152_Weights.DEFAULT")
         resnet.fc = nn.Linear(in_features=2048, out_features=1, bias=True)
         resnet.to(DEVICE)
         optimizer = optim.Adam(resnet.parameters(), lr=LR)
