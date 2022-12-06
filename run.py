@@ -54,10 +54,12 @@ def run_all(df_val, df_train=None):
         resnet.to(DEVICE)
         # model = VGG("VGG16").to(DEVICE)
         trainAndSave(resnet, train_loader, valid_loader)
+        print("trained and saved model!")
     else:
 
         # TODO: use pretrained model
-        resnet = torch.load("resnet152.pt")
+        resnet = torch.load("src/models/resnet152.pt")
+        print("loaded pretrained model!")
         resnet.eval()
 
 

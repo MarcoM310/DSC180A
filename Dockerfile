@@ -16,7 +16,7 @@ LABEL maintainer="UC San Diego ITS/ETS <ets-consult@ucsd.edu>"
 USER root
 RUN apt-get update && \
     apt-get upgrade -y
-
+RUN pip install --no-cache-dir -r requirements.txt
 # RUN apt-get -y install aria2 nmap traceroute
 
 # 3) install packages using notebook user
@@ -24,7 +24,6 @@ USER jovyan
 
 # RUN conda install -y scikit-learn
 # RUN conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch -c nvidia
-RUN conda clean -tipy
 # RUN pip install --no-cache-dir babypandas geopandas
 
 # Override command to disable running jupyter notebook at launch
