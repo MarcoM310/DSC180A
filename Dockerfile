@@ -20,6 +20,7 @@ RUN apt update
 USER jovyan
 
 # RUN conda install -y scikit-learn
+RUN conda install pytorch torchvision torchaudio pytorch-cuda=11.7 -c pytorch -c nvidia
 
 # RUN pip install --no-cache-dir babypandas geopandas
 
