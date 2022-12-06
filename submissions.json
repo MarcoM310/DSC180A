@@ -1,4 +1,4 @@
 {
-    "dockerhub-id": "ddav118/meth5:latest",
-    "build-script": "python run.py test"
+    "dockerhub-id": "marcom310/ma5:latest",
+    "build-script": "python run.py train"
 }
